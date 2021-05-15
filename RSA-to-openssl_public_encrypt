@@ -1,31 +1,31 @@
 public function public_key_encrypt($plaintext)
-	{
-		//I have this RSA public key:
-		$publicKey = "MIGfMA0GCSqGSIb*******************************************1pmGKxILjT7n06nxG7LlFkjertsldkfgsdjitreltmlkjsdjtglkdsjoilTpyx0c3+jq0o47wIFjq5fwIDAQAB";
-    //I use this code to make the string become exactly 256 bytes so that it follows the standard for this specific application:
-    $leftover = (256 - strlen($publicKey)) / 2;
-		while ($leftover > 0) {
-        $publicKey .= "\x0";
-        $leftover--;
-		}
-		// Make Format as public certificate file format
-		$info = wordwrap($publicKey, 65, "\n", true);
-		//$publicKey = str_replace(' ', '+', $info);
-		$publicKey ="-----BEGIN PUBLIC KEY-----\n$publicKey\n-----END PUBLIC KEY-----";
-		$encrypted = '';
-
-    $pub_id = openssl_get_publickey($publicKey);
-    $key_len = openssl_pkey_get_details($pub_id)['bits'];
-
-    $part_len = $key_len / 8 - 11;
-
-    $parts = str_split($plaintext, $part_len);
-
-    foreach ($parts as $part) {
-        $encrypted_temp = '';
-        openssl_public_encrypt($part, $encrypted_temp, $publicKey);
-        $encrypted .= $encrypted_temp;
-    }
-		
-		return base64_encode($encrypted);
+{
+	//I have this RSA public key:
+	$publicKey = "MIGfMA0GCSqGSIb*******************************************1pmGKxILjT7n06nxG7LlFkjertsldkfgsdjitreltmlkjsdjtglkdsjoilTpyx0c3+jq0o47wIFjq5fwIDAQAB";
+	//I use this code to make the string become exactly 256 bytes so that it follows the standard for this specific application:
+	$leftover = (256 - strlen($publicKey)) / 2;
+	while ($leftover > 0) {
+		$publicKey .= "\x0";
+		$leftover--;
 	}
+	// Make Format as public certificate file format
+	$info = wordwrap($publicKey, 65, "\n", true);
+	//$publicKey = str_replace(' ', '+', $info);
+	$publicKey ="-----BEGIN PUBLIC KEY-----\n$publicKey\n-----END PUBLIC KEY-----";
+	$encrypted = '';
+
+	$pub_id = openssl_get_publickey($publicKey);
+	$key_len = openssl_pkey_get_details($pub_id)['bits'];
+
+	$part_len = $key_len / 8 - 11;
+
+	$parts = str_split($plaintext, $part_len);
+
+	foreach ($parts as $part) {
+		$encrypted_temp = '';
+		openssl_public_encrypt($part, $encrypted_temp, $publicKey);
+		$encrypted .= $encrypted_temp;
+	}
+
+	return base64_encode($encrypted);
+}
